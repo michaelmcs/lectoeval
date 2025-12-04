@@ -26,7 +26,13 @@
                 </div>
 
                 <template x-if="filteredReadings.length === 0">
-                    <p class="text-gray-500 text-sm">No hay sesiones con análisis completado.</p>
+                    <div class="text-center py-4">
+                        <i class="fas fa-search text-3xl text-gray-300 mb-2"></i>
+                        <p class="text-gray-500 text-sm">No hay sesiones con análisis completado.</p>
+                        <p class="text-gray-400 text-xs mt-1">
+                            Las sesiones aparecerán aquí después de procesar el audio con ASR.
+                        </p>
+                    </div>
                 </template>
 
                 <div class="space-y-2">
@@ -49,8 +55,8 @@
                                          x-text="getLevel(reading.precision, reading.wer)">
                                     </div>
                                     <div class="text-[0.65rem] text-gray-500 mt-1">
-                                        <span x-text="reading.precision.toFixed(1)"></span>% /
-                                        <span x-text="reading.wer.toFixed(1)"></span>% WER
+                                        <span x-text="reading.precision ? reading.precision.toFixed(1) : '0.0'"></span>% /
+                                        <span x-text="reading.wer ? reading.wer.toFixed(1) : '0.0'"></span>% WER
                                     </div>
                                 </div>
                             </div>
@@ -106,12 +112,12 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-xs">
                             <div class="p-3 bg-blue-50 rounded-xl">
                                 <div class="text-lg font-bold text-blue-600" 
-                                     x-text="selectedReading.precision.toFixed(2) + '%'"></div>
+                                     x-text="selectedReading.precision ? selectedReading.precision.toFixed(2) + '%' : '—'"></div>
                                 <div class="mt-1 text-blue-700">Precisión</div>
                             </div>
                             <div class="p-3 bg-purple-50 rounded-xl">
                                 <div class="text-lg font-bold text-purple-600" 
-                                     x-text="selectedReading.wer.toFixed(2) + '%'"></div>
+                                     x-text="selectedReading.wer ? selectedReading.wer.toFixed(2) + '%' : '—'"></div>
                                 <div class="mt-1 text-purple-700">Tasa de Error (WER)</div>
                             </div>
                             <div class="p-3 bg-green-50 rounded-xl">
@@ -121,7 +127,7 @@
                             </div>
                             <div class="p-3 bg-gray-50 rounded-xl">
                                 <div class="text-lg font-bold text-gray-700" 
-                                     x-text="(selectedReading.duration_ms ? (selectedReading.duration_ms / 1000).toFixed(1) : '—') + ' s'"></div>
+                                     x-text="selectedReading.duration_ms ? (selectedReading.duration_ms / 1000).toFixed(1) + ' s' : '—'"></div>
                                 <div class="mt-1 text-gray-700">Duración</div>
                             </div>
                         </div>
@@ -131,26 +137,119 @@
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-2">Texto objetivo</h3>
                                 <div class="bg-gray-50 rounded-2xl p-3 max-h-60 overflow-y-auto">
-                                    <pre class="whitespace-pre-wrap text-xs"
-                                         x-text="selectedReading.text.texto_plano"></pre>
+                                    <template x-if="selectedReading.text && selectedReading.text.texto_plano">
+                                        <pre class="whitespace-pre-wrap text-xs"
+                                             x-text="selectedReading.text.texto_plano"></pre>
+                                    </template>
+                                    <template x-if="!selectedReading.text || !selectedReading.text.texto_plano">
+                                        <p class="text-gray-400 text-xs">Texto no disponible</p>
+                                    </template>
                                 </div>
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-2">Transcripción del estudiante</h3>
                                 <div class="bg-gray-50 rounded-2xl p-3 max-h-60 overflow-y-auto">
-                                    <pre class="whitespace-pre-wrap text-xs"
-                                         x-text="selectedReading.transcripcion || 'No hay transcripción almacenada.'"></pre>
+                                    <template x-if="selectedReading.transcripcion">
+                                        <pre class="whitespace-pre-wrap text-xs"
+                                             x-text="selectedReading.transcripcion"></pre>
+                                    </template>
+                                    <template x-if="!selectedReading.transcripcion">
+                                        <p class="text-gray-400 text-xs">No hay transcripción almacenada.</p>
+                                    </template>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- (Espacio futuro) Resumen de errores -->
-                        <div class="mt-4 text-xs text-gray-500">
-                            <p>
-                                Nota: en esta versión solo se muestran las métricas globales y los textos completos.
-                                Más adelante aquí se puede usar <code>resultado_json</code> para resaltar palabras omitidas,
-                                sustituciones y errores específicos.
-                            </p>
+                        <!-- Análisis detallado si existe resultado_json -->
+                        <template x-if="selectedReading.resultado_json && typeof selectedReading.resultado_json === 'string'">
+                            <div class="border-t pt-4">
+                                <h3 class="font-semibold text-gray-800 mb-2">Análisis Detallado</h3>
+                                <div class="space-y-4">
+                                    <!-- Estadísticas -->
+                                    <template x-if="parseJson(selectedReading.resultado_json)">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <template x-if="getOmissionsCount(selectedReading.resultado_json) > 0">
+                                                <div class="p-3 bg-red-50 rounded-xl">
+                                                    <div class="text-lg font-bold text-red-600" 
+                                                         x-text="getOmissionsCount(selectedReading.resultado_json)"></div>
+                                                    <div class="mt-1 text-red-700 text-xs">Palabras omitidas</div>
+                                                </div>
+                                            </template>
+                                            <template x-if="getSubstitutionsCount(selectedReading.resultado_json) > 0">
+                                                <div class="p-3 bg-yellow-50 rounded-xl">
+                                                    <div class="text-lg font-bold text-yellow-600" 
+                                                         x-text="getSubstitutionsCount(selectedReading.resultado_json)"></div>
+                                                    <div class="mt-1 text-yellow-700 text-xs">Sustituciones</div>
+                                                </div>
+                                            </template>
+                                            <template x-if="getInsertionsCount(selectedReading.resultado_json) > 0">
+                                                <div class="p-3 bg-blue-50 rounded-xl">
+                                                    <div class="text-lg font-bold text-blue-600" 
+                                                         x-text="getInsertionsCount(selectedReading.resultado_json)"></div>
+                                                    <div class="mt-1 text-blue-700 text-xs">Palabras adicionales</div>
+                                                </div>
+                                            </template>
+                                            <div class="p-3 bg-gray-50 rounded-xl">
+                                                <div class="text-lg font-bold text-gray-600" 
+                                                     x-text="getTotalErrors(selectedReading.resultado_json)"></div>
+                                                <div class="mt-1 text-gray-700 text-xs">Errores totales</div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                    <!-- Lista detallada de errores -->
+                                    <div class="bg-gray-50 rounded-2xl p-4 max-h-60 overflow-y-auto">
+                                        <h4 class="font-semibold text-gray-700 mb-3 text-sm">Detalle de errores por palabra:</h4>
+                                        <template x-if="parseJson(selectedReading.resultado_json)">
+                                            <div class="space-y-2">
+                                                <template x-for="(error, index) in getErrorDetails(selectedReading.resultado_json)" :key="index">
+                                                    <div class="flex items-center justify-between p-2 bg-white rounded-lg border border-gray-200">
+                                                        <div class="flex items-center space-x-3">
+                                                            <span class="text-xs text-gray-500" x-text="'Pos: ' + (error.pos + 1)"></span>
+                                                            <template x-if="error.target && !error.said">
+                                                                <div class="flex items-center">
+                                                                    <span class="text-red-500 line-through text-sm" x-text="error.target"></span>
+                                                                    <i class="fas fa-arrow-right text-xs text-gray-400 mx-2"></i>
+                                                                    <span class="text-gray-400 text-sm italic">(omisión)</span>
+                                                                </div>
+                                                            </template>
+                                                            <template x-if="error.said && !error.target">
+                                                                <div class="flex items-center">
+                                                                    <span class="text-gray-400 text-sm italic">(adicional)</span>
+                                                                    <i class="fas fa-arrow-right text-xs text-gray-400 mx-2"></i>
+                                                                    <span class="text-blue-500 text-sm" x-text="error.said"></span>
+                                                                </div>
+                                                            </template>
+                                                            <template x-if="error.said && error.target">
+                                                                <div class="flex items-center">
+                                                                    <span class="text-gray-700 font-medium text-sm" x-text="error.target"></span>
+                                                                    <i class="fas fa-arrow-right text-xs text-gray-400 mx-2"></i>
+                                                                    <span class="text-yellow-600 text-sm" x-text="error.said"></span>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                        <span class="text-xs px-2 py-1 rounded-full" 
+                                                              :class="getErrorTypeClass(error)">
+                                                            <span x-text="getErrorTypeLabel(error)"></span>
+                                                        </span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                        <template x-if="!parseJson(selectedReading.resultado_json)">
+                                            <p class="text-gray-400 text-xs">No se pudo parsear el análisis detallado.</p>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Acciones -->
+                        <div class="flex justify-end space-x-3 pt-4 border-t">
+                            <button @click="downloadResults()"
+                                    class="px-4 py-2 bg-purple-600 text-white text-sm rounded-xl hover:bg-purple-700 transition duration-200">
+                                <i class="fas fa-download mr-2"></i>Descargar Resultados
+                            </button>
                         </div>
                     </div>
                 </template>
@@ -171,9 +270,9 @@
                     if (this.searchTerm) {
                         const term = this.searchTerm.toLowerCase();
                         list = list.filter(r =>
-                            r.student.apellidos.toLowerCase().includes(term) ||
-                            r.student.nombres.toLowerCase().includes(term) ||
-                            r.text.titulo.toLowerCase().includes(term)
+                            (r.student && r.student.apellidos && r.student.apellidos.toLowerCase().includes(term)) ||
+                            (r.student && r.student.nombres && r.student.nombres.toLowerCase().includes(term)) ||
+                            (r.text && r.text.titulo && r.text.titulo.toLowerCase().includes(term))
                         );
                     }
 
@@ -225,11 +324,157 @@
                 async loadReadings() {
                     try {
                         const resp = await fetch('{{ route("readings.api.index") }}');
-                        if (!resp.ok) return;
+                        if (!resp.ok) {
+                            console.error('Error al cargar lecturas:', resp.statusText);
+                            return;
+                        }
                         this.readings = await resp.json();
                     } catch (e) {
+                        console.error('Error en fetch:', e);
                         this.readings = [];
                     }
+                },
+
+                // Funciones para procesar el JSON de análisis
+                parseJson(jsonString) {
+                    if (!jsonString) return null;
+                    try {
+                        // Si ya es un objeto, devolverlo
+                        if (typeof jsonString === 'object') return jsonString;
+                        
+                        // Si es un string, intentar parsearlo
+                        if (typeof jsonString === 'string') {
+                            // Limpiar el string si es necesario
+                            let cleanString = jsonString;
+                            if (cleanString.startsWith('"') && cleanString.endsWith('"')) {
+                                cleanString = cleanString.slice(1, -1);
+                            }
+                            // Reemplazar comillas escapadas
+                            cleanString = cleanString.replace(/\\"/g, '"');
+                            return JSON.parse(cleanString);
+                        }
+                        return null;
+                    } catch (e) {
+                        console.error('Error parsing JSON:', e);
+                        return null;
+                    }
+                },
+
+                getOmissionsCount(jsonString) {
+                    const data = this.parseJson(jsonString);
+                    if (!data || !Array.isArray(data)) return 0;
+                    
+                    // Contar omisiones (primer elemento con omissions)
+                    const omissions = data.find(item => item.omissions !== undefined);
+                    return omissions ? omissions.omissions : 0;
+                },
+
+                getSubstitutionsCount(jsonString) {
+                    const data = this.parseJson(jsonString);
+                    if (!data || !Array.isArray(data)) return 0;
+                    
+                    return data.filter(item => 
+                        item.said && item.target && item.said !== item.target
+                    ).length;
+                },
+
+                getInsertionsCount(jsonString) {
+                    const data = this.parseJson(jsonString);
+                    if (!data || !Array.isArray(data)) return 0;
+                    
+                    return data.filter(item => 
+                        item.said && !item.target
+                    ).length;
+                },
+
+                getTotalErrors(jsonString) {
+                    return this.getOmissionsCount(jsonString) + 
+                           this.getSubstitutionsCount(jsonString) + 
+                           this.getInsertionsCount(jsonString);
+                },
+
+                getErrorDetails(jsonString) {
+                    const data = this.parseJson(jsonString);
+                    if (!data || !Array.isArray(data)) return [];
+                    
+                    // Filtrar solo los errores (excluir el contador de omisiones)
+                    return data.filter(item => 
+                        item.target !== undefined || item.said !== undefined
+                    );
+                },
+
+                getErrorTypeClass(error) {
+                    if (error.target && !error.said) {
+                        return 'bg-red-100 text-red-800';
+                    } else if (error.said && !error.target) {
+                        return 'bg-blue-100 text-blue-800';
+                    } else if (error.said && error.target) {
+                        return 'bg-yellow-100 text-yellow-800';
+                    }
+                    return 'bg-gray-100 text-gray-800';
+                },
+
+                getErrorTypeLabel(error) {
+                    if (error.target && !error.said) {
+                        return 'Omisión';
+                    } else if (error.said && !error.target) {
+                        return 'Adicional';
+                    } else if (error.said && error.target) {
+                        return 'Sustitución';
+                    }
+                    return 'Desconocido';
+                },
+
+                downloadResults() {
+                    if (!this.selectedReading) return;
+                    
+                    // Parsear resultado_json si es un string
+                    let resultadoParsed = this.selectedReading.resultado_json;
+                    if (typeof resultadoParsed === 'string') {
+                        try {
+                            let cleanString = resultadoParsed;
+                            if (cleanString.startsWith('"') && cleanString.endsWith('"')) {
+                                cleanString = cleanString.slice(1, -1);
+                            }
+                            cleanString = cleanString.replace(/\\"/g, '"');
+                            resultadoParsed = JSON.parse(cleanString);
+                        } catch (e) {
+                            console.error('Error parsing JSON for download:', e);
+                        }
+                    }
+                    
+                    // Crear objeto con los datos
+                    const data = {
+                        estudiante: this.selectedReading.student,
+                        texto: this.selectedReading.text,
+                        docente: this.selectedReading.teacher,
+                        transcripcion: this.selectedReading.transcripcion,
+                        metricas: {
+                            precision: this.selectedReading.precision,
+                            wer: this.selectedReading.wer,
+                            velocidad_ppm: this.selectedReading.velocidad_ppm,
+                            duracion: this.selectedReading.duration_ms
+                        },
+                        analisis_detallado: resultadoParsed,
+                        resumen_errores: {
+                            omisiones: this.getOmissionsCount(this.selectedReading.resultado_json),
+                            sustituciones: this.getSubstitutionsCount(this.selectedReading.resultado_json),
+                            inserciones: this.getInsertionsCount(this.selectedReading.resultado_json),
+                            total_errores: this.getTotalErrors(this.selectedReading.resultado_json)
+                        },
+                        fecha_analisis: new Date().toISOString()
+                    };
+                    
+                    // Crear y descargar archivo JSON
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `lectura_${this.selectedReading.id}_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                 },
 
                 init() {
@@ -238,12 +483,42 @@
             }
         }
 
+        // Inicializar Alpine cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof Alpine === 'undefined') {
                 console.error('Alpine.js no está cargado');
                 return;
             }
-            Alpine.data('compareApp', compareApp);
+            
+            // Asegurarse de que el componente esté registrado
+            if (typeof Alpine.data('compareApp') === 'undefined') {
+                Alpine.data('compareApp', compareApp);
+            }
         });
     </script>
+
+    <!-- Estilos adicionales -->
+    <style>
+        /* Scroll personalizado */
+        .max-h-60::-webkit-scrollbar {
+            width: 6px;
+        }
+        .max-h-60::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .max-h-60::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 10px;
+        }
+        .max-h-60::-webkit-scrollbar-thumb:hover {
+            background: #a5b4fc;
+        }
+
+        /* Estilos para preformateado */
+        pre {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            line-height: 1.5;
+        }
+    </style>
 </x-app-layout>

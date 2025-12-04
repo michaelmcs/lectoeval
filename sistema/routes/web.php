@@ -109,3 +109,7 @@ Route::fallback(function () {
     
     return response()->view('errors.404', [], 404);
 });
+
+
+// Ruta para el API del comparador
+Route::get('/admin/readings/api', [ReadingController::class, 'apiIndex'])->name('readings.api.index');

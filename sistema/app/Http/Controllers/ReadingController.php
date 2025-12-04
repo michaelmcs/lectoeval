@@ -396,14 +396,20 @@ $command = escapeshellcmd($python) . ' -X utf8 '
     }
 
     /** API: listar todas las sesiones */
-    public function apiIndex()
-    {
-        $readings = ReadingSession::with(['student', 'text', 'teacher'])
-            ->latest()
-            ->get();
 
-        return response()->json($this->sanitizeUtf8($readings->toArray()));
-    }
+
+    public function apiIndex()
+{
+    // Solo mostrar lecturas con análisis completado (status = 'ready')
+    $readings = ReadingSession::with(['student', 'text', 'teacher'])
+        ->where('status', 'ready')
+        ->latest()
+        ->get();
+
+    return response()->json($this->sanitizeUtf8($readings->toArray()));
+}
+
+    
 
     /** API: selects */
     public function getStudents()
@@ -424,6 +430,9 @@ $command = escapeshellcmd($python) . ' -X utf8 '
             ], 500);
         }
     }
+
+
+
 
     public function getTeachers()
     {
