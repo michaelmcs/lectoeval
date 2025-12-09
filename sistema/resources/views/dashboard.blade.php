@@ -1,13 +1,10 @@
 <x-app-layout>
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
             <div class="mb-8">
                 <h1 class="text-3xl font-bold text-gray-900">Dashboard LectoEval</h1>
                 <p class="text-gray-600 mt-2">Panel de control del sistema de evaluación de lectura</p>
             </div>
-
-            <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
                     <div class="flex items-center">
@@ -66,7 +63,6 @@
                 </div>
             </div>
 
-            <!-- Quick Actions -->
             <div class="bg-white rounded-lg shadow p-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Acciones Rápidas</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -99,8 +95,6 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Recent Activity (placeholder) -->
             <div class="mt-8 bg-white rounded-lg shadow p-6">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4">Actividad Reciente</h3>
                 <div class="text-center text-gray-500 py-8">

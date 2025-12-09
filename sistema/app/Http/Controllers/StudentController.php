@@ -164,8 +164,6 @@ class StudentController extends Controller
             ], 500);
         }
     }
-
-    // API endpoint para Alpine.js
     public function apiIndex()
     {
         $students = Student::orderBy('apellidos')->get();

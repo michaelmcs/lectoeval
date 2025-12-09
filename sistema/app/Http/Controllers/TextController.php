@@ -61,7 +61,6 @@ class TextController extends Controller
                 'ocr_status' => $ocrStatus,
             ]);
 
-            // Si hay PDF, guardarlo
             if ($request->hasFile('pdf')) {
                 $file = $request->file('pdf');
                 $path = $file->store('texts', 'public');
@@ -171,8 +170,7 @@ class TextController extends Controller
             $file = $request->file('pdf');
             $fileName = $file->getClientOriginalName();
             $fileSize = $file->getSize();
-            
-            // EXTRAER TEXTO REAL DEL PDF
+        
             $pdfText = $this->extractTextFromPdf($file);
             
             if (empty(trim($pdfText))) {
@@ -208,11 +206,8 @@ class TextController extends Controller
             $pdf = $parser->parseFile($pdfFile->getPathname());
             $text = $pdf->getText();
             
-            // Limpiar y formatear el texto
-            $text = preg_replace('/\s+/', ' ', $text); // Eliminar espacios múltiples
+            $text = preg_replace('/\s+/', ' ', $text); 
             $text = trim($text);
-            
-            // Si el texto está vacío, podría ser un PDF escaneado (imagen)
             if (empty($text)) {
                 throw new \Exception('El PDF parece ser una imagen escaneada. Se requiere OCR avanzado para extraer texto de imágenes.');
             }
@@ -220,7 +215,7 @@ class TextController extends Controller
             return $text;
             
         } catch (\Exception $e) {
-            // Si falla la librería, intentar con una alternativa
+
             return $this->extractTextWithFallback($pdfFile, $e);
         }
     }
@@ -228,7 +223,6 @@ class TextController extends Controller
     private function extractTextWithFallback($pdfFile, $originalError)
     {
         try {
-            // Intentar con shell command si pdftotext está disponible
             if ($this->isPdftotextAvailable()) {
                 $tempPath = $pdfFile->getPathname();
                 $outputPath = tempnam(sys_get_temp_dir(), 'pdf_text');
@@ -245,7 +239,6 @@ class TextController extends Controller
                 }
             }
             
-            // Si todo falla, lanzar el error original
             throw new \Exception($originalError->getMessage());
             
         } catch (\Exception $e) {
@@ -259,9 +252,7 @@ class TextController extends Controller
         return !empty($output);
     }
 
-    /**
-     * Asegura que los directorios necesarios existan
-     */
+   
     private function ensureDirectoriesExist()
     {
         $directories = [

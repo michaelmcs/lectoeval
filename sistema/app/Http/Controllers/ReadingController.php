@@ -13,7 +13,6 @@ class ReadingController extends Controller
 {
     public function index()
     {
-        // Solo carga la vista principal; todo lo demás es por AJAX (API interna)
         return view('readings.index');
     }
 
@@ -152,7 +151,7 @@ class ReadingController extends Controller
             $path = $file->storeAs($directory, $fileName, 'public');
 
             $reading->update([
-                'audio_path'   => $path,              // ruta relativa en storage/app/public
+                'audio_path'   => $path,     
                 'duration_ms'  => $request->duration_ms,
                 'status'       => 'processing',
                 'transcripcion'    => null,
@@ -214,16 +213,16 @@ class ReadingController extends Controller
 
             \Log::info('Archivo de audio encontrado, tamaño: ' . filesize($audioPath) . ' bytes');
 
-            // Convertir a WAV 16k mono
+
             \Log::info('Convirtiendo audio a WAV...');
             $wavOut = $this->convertToWav($audioPath);
             \Log::info('Audio convertido a: ' . $wavOut);
 
-            // Obtener texto objetivo desde el modelo Text
+
             $targetText = $reading->text->texto_plano ?? '';
             \Log::info('Longitud del texto objetivo: ' . mb_strlen($targetText));
 
-            // Ejecutar análisis ASR (llamando al script Python)
+  
             \Log::info('Ejecutando análisis ASR...');
             $result = $this->executeASR($wavOut, $targetText);
 
@@ -322,8 +321,6 @@ class ReadingController extends Controller
         file_put_contents($tmpTarget, $targetText);
 
 
-
-            // Forzar modo UTF-8 en Python (-X utf8)
 $command = escapeshellcmd($python) . ' -X utf8 '
     . escapeshellarg($script)
     . ' --audio ' . escapeshellarg($audioPath)
@@ -350,8 +347,6 @@ $command = escapeshellcmd($python) . ' -X utf8 '
         if (empty($output)) {
             throw new \Exception('El script de ASR no devolvió salida');
         }
-
-        // Buscar la última línea que parezca JSON puro
         $jsonLine = null;
         for ($i = count($output) - 1; $i >= 0; $i--) {
             $line = trim($output[$i]);
@@ -395,7 +390,6 @@ $command = escapeshellcmd($python) . ' -X utf8 '
         return $value;
     }
 
-    /** API: listar todas las sesiones */
 
 
     public function apiIndex()
@@ -411,7 +405,7 @@ $command = escapeshellcmd($python) . ' -X utf8 '
 
     
 
-    /** API: selects */
+
     public function getStudents()
     {
         try {
@@ -430,7 +424,6 @@ $command = escapeshellcmd($python) . ' -X utf8 '
             ], 500);
         }
     }
-
 
 
 
@@ -471,7 +464,7 @@ $command = escapeshellcmd($python) . ' -X utf8 '
         }
     }
 
-    /** API: estadísticas rápidas */
+
     public function statistics()
     {
         try {
@@ -492,7 +485,7 @@ $command = escapeshellcmd($python) . ' -X utf8 '
         }
     }
 
-    /** Rutas legacy: redirigir a index sin romper enlaces viejos */
+
     public function create()
     {
         return redirect()->route('readings.index');

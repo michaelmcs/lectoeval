@@ -7,7 +7,6 @@ use App\Http\Controllers\{
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
-// Redirige a la página de login si no está autenticado
 Route::get('/', function () {
     return redirect('/login');
 });
@@ -41,7 +40,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/texts/{text}/upload-pdf', [TextController::class, 'uploadPdf'])->name('texts.uploadPdf');
     Route::post('/admin/texts/process-pdf', [TextController::class, 'processPdf'])->name('texts.process-pdf');
 
-    // RUTAS PARA LECTURAS - SOLO LAS NECESARIAS
     Route::get('/admin/readings', [ReadingController::class, 'index'])->name('readings.index');
     Route::post('/admin/readings', [ReadingController::class, 'store'])->name('readings.store');
     Route::put('/admin/readings/{reading}', [ReadingController::class, 'update'])->name('readings.update');
@@ -72,7 +70,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
     Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 
-    // API interna para AJAX
     Route::prefix('api')->group(function () {
         Route::get('/texts/search', [TextController::class, 'search'])->name('api.texts.search');
         Route::get('/students/search', [StudentController::class, 'search'])->name('api.students.search');
@@ -89,7 +86,6 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
-// Ruta de salud del sistema
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
@@ -98,7 +94,6 @@ Route::get('/health', function () {
     ]);
 });
 
-// Ruta de fallback para manejar 404
 Route::fallback(function () {
     if (request()->is('api/*')) {
         return response()->json([
@@ -111,5 +106,4 @@ Route::fallback(function () {
 });
 
 
-// Ruta para el API del comparador
 Route::get('/admin/readings/api', [ReadingController::class, 'apiIndex'])->name('readings.api.index');

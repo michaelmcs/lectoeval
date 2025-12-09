@@ -11,12 +11,11 @@
   </head>
   <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-      <!-- SOLO UN navbar - el de LectoEval para admin -->
+ 
       @auth
         @if(auth()->user()->role == 'admin')
           @include('layouts.nav')
         @else
-          <!-- Para usuarios no-admin, podrías mostrar un navbar diferente o ninguno -->
           @include('layouts.navigation') 
         @endif
       @endauth

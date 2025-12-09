@@ -17,13 +17,11 @@ class Teacher extends Model
         'telefono'
     ];
 
-    // Accesor para nombre completo
     public function getNombreCompletoAttribute()
     {
         return $this->nombres . ' ' . $this->apellidos;
     }
 
-    // Accesor para iniciales (para avatar)
     public function getInicialesAttribute()
     {
         $iniciales = substr($this->nombres, 0, 1) . substr($this->apellidos, 0, 1);

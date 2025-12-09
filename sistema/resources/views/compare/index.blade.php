@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto p-4 sm:p-6" x-data="compareApp()">
-        <!-- Encabezado -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800" style="font-family: 'Comic Sans MS', cursive;">
@@ -65,7 +64,6 @@
                 </div>
             </div>
 
-            <!-- Detalle de sesión -->
             <div class="md:col-span-2">
                 <template x-if="!selectedReading">
                     <div class="bg-white rounded-2xl shadow-lg p-6 flex items-center justify-center h-full">
@@ -78,7 +76,7 @@
 
                 <template x-if="selectedReading">
                     <div class="bg-white rounded-2xl shadow-lg p-6 space-y-5">
-                        <!-- Info general -->
+
                         <div class="flex flex-col md:flex-row justify-between gap-4">
                             <div class="space-y-1 text-sm">
                                 <div>
@@ -108,7 +106,6 @@
                             </div>
                         </div>
 
-                        <!-- Métricas -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-xs">
                             <div class="p-3 bg-blue-50 rounded-xl">
                                 <div class="text-lg font-bold text-blue-600" 
@@ -132,7 +129,6 @@
                             </div>
                         </div>
 
-                        <!-- Comparación de textos -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-2">Texto objetivo</h3>
@@ -160,7 +156,7 @@
                             </div>
                         </div>
 
-                        <!-- Análisis detallado si existe resultado_json -->
+  
                         <template x-if="selectedReading.resultado_json && typeof selectedReading.resultado_json === 'string'">
                             <div class="border-t pt-4">
                                 <h3 class="font-semibold text-gray-800 mb-2">Análisis Detallado</h3>
@@ -197,7 +193,7 @@
                                         </div>
                                     </template>
 
-                                    <!-- Lista detallada de errores -->
+        
                                     <div class="bg-gray-50 rounded-2xl p-4 max-h-60 overflow-y-auto">
                                         <h4 class="font-semibold text-gray-700 mb-3 text-sm">Detalle de errores por palabra:</h4>
                                         <template x-if="parseJson(selectedReading.resultado_json)">
@@ -244,7 +240,7 @@
                             </div>
                         </template>
 
-                        <!-- Acciones -->
+          
                         <div class="flex justify-end space-x-3 pt-4 border-t">
                             <button @click="downloadResults()"
                                     class="px-4 py-2 bg-purple-600 text-white text-sm rounded-xl hover:bg-purple-700 transition duration-200">
@@ -442,8 +438,7 @@
                             console.error('Error parsing JSON for download:', e);
                         }
                     }
-                    
-                    // Crear objeto con los datos
+
                     const data = {
                         estudiante: this.selectedReading.student,
                         texto: this.selectedReading.text,
@@ -465,7 +460,6 @@
                         fecha_analisis: new Date().toISOString()
                     };
                     
-                    // Crear y descargar archivo JSON
                     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -483,7 +477,7 @@
             }
         }
 
-        // Inicializar Alpine cuando el DOM esté listo
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof Alpine === 'undefined') {
                 console.error('Alpine.js no está cargado');
@@ -497,7 +491,7 @@
         });
     </script>
 
-    <!-- Estilos adicionales -->
+
     <style>
         /* Scroll personalizado */
         .max-h-60::-webkit-scrollbar {
@@ -515,7 +509,7 @@
             background: #a5b4fc;
         }
 
-        /* Estilos para preformateado */
+
         pre {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             line-height: 1.5;

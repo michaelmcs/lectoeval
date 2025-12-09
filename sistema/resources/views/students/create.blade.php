@@ -1,13 +1,11 @@
 <x-app-layout>
     <div class="py-8">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
             <div class="mb-6">
                 <h1 class="text-3xl font-bold text-gray-900">Nuevo Estudiante</h1>
                 <p class="text-gray-600 mt-2">Agregar un nuevo estudiante al sistema</p>
             </div>
 
-            <!-- Form -->
             <div class="bg-white rounded-lg shadow p-6">
                 <form action="{{ route('students.store') }}" method="POST">
                     @csrf

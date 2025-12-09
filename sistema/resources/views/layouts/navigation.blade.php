@@ -4,9 +4,7 @@
         <div class="relative flex items-center justify-between h-16">
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 <!-- Mobile menu button-->
-                 ASDFSDFSDFSDFSDFSDFSDFSDFSDD
-                 SD
-                 AF
+Bienvenido
             </div>
             <div class="flex items-center justify-between sm:items-stretch sm:justify-start">
                 <div class="flex-shrink-0">

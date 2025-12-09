@@ -5,7 +5,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6" x-data="teacherApp()">
-        <!-- Encabezado -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800" style="font-family: 'Comic Sans MS', cursive;">Nuestros Docentes</h1>
@@ -26,7 +25,6 @@
             </div>
         </div>
 
-        <!-- Panel de Búsqueda y Filtros -->
         <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 transition duration-300 hover:shadow-xl">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
@@ -40,7 +38,6 @@
             </div>
         </div>
 
-        <!-- Tabla de Docentes -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">

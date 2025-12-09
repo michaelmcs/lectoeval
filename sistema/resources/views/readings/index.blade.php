@@ -2,7 +2,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <div class="max-w-7xl mx-auto p-4 sm:p-6" x-data="readingApp()">
-        <!-- Encabezado -->
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800" style="font-family: 'Comic Sans MS', cursive;">
@@ -14,13 +14,13 @@
             </div>
             <div class="flex gap-3">
                 <button @click="openCreateModal()" 
-                        class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2.5 px-6 rounded-xl flex items-center shadow-lg transition duration-300">
+                        class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 
+                        text-white font-bold py-2.5 px-6 rounded-xl flex items-center shadow-lg transition duration-300">
                     <i class="fas fa-plus-circle mr-2"></i> Nueva Sesión
                 </button>
             </div>
         </div>
 
-        <!-- Panel de Estadísticas -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-white rounded-2xl shadow-lg p-4 text-center transition duration-300 hover:shadow-xl">
                 <div class="text-2xl font-bold text-purple-600" x-text="stats.total"></div>
@@ -40,7 +40,6 @@
             </div>
         </div>
 
-        <!-- Panel de Búsqueda y Filtros -->
         <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 transition duration-300 hover:shadow-xl">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
@@ -64,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Tabla de Sesiones -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -149,7 +147,6 @@
                 </table>
             </div>
             
-            <!-- Paginación -->
             <div class="p-3 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
                 <div class="text-gray-600 mb-3 md:mb-0 text-sm">
                     Mostrando <span x-text="showingFrom"></span> a <span x-text="showingTo"></span> de <span x-text="filteredReadings.length"></span> sesiones
@@ -181,7 +178,6 @@
             </div>
         </div>
 
-        <!-- Modal para Crear/Editar Sesión -->
         <div x-show="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -251,8 +247,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Modal para Ver Sesión -->
         <div x-show="isViewModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.away="closeViewModal()">
             <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto" @click.stop>
                 <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6 rounded-t-2xl">
@@ -267,7 +261,6 @@
                 <div class="p-6">
                     <template x-if="viewingReading">
                         <div class="space-y-6">
-                            <!-- Información General -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div>
                                     <span class="font-semibold">Estudiante:</span>
@@ -283,7 +276,6 @@
                                 </div>
                             </div>
 
-                            <!-- Estado -->
                             <div class="flex justify-between items-center p-4 bg-gray-50 rounded-2xl">
                                 <span class="font-semibold">Estado:</span>
                                 <span x-bind:class="{
@@ -294,7 +286,6 @@
                                 }" x-text="getStatusText(viewingReading.status)"></span>
                             </div>
 
-                            <!-- Métricas + nivel -->
                             <template x-if="viewingReading.status === 'ready'">
                                 <div>
                                     <h3 class="font-semibold text-gray-800 mb-4">Resultados del Análisis:</h3>
@@ -323,7 +314,6 @@
                                         </div>
                                     </template>
 
-                                    <!-- Transcripción -->
                                     <div class="mt-4">
                                         <h4 class="font-semibold text-gray-700 mb-2">Transcripción:</h4>
                                         <div class="bg-gray-50 rounded-xl p-3 max-h-40 overflow-y-auto">
@@ -332,8 +322,6 @@
                                     </div>
                                 </div>
                             </template>
-
-                            <!-- Texto a Leer -->
                             <div>
                                 <h3 class="font-semibold text-gray-800 mb-2">Texto para Leer:</h3>
                                 <div class="bg-gray-50 rounded-2xl p-4 max-h-60 overflow-y-auto">
@@ -341,7 +329,6 @@
                                 </div>
                             </div>
 
-                            <!-- Grabación de Audio -->
                             <div x-data="recordingApp(viewingReading.id)">
                                 <h3 class="font-semibold text-gray-800 mb-2">Grabación de Lectura:</h3>
                                 <div class="space-y-4">
@@ -359,8 +346,6 @@
                                             Detener
                                         </button>
                                     </div>
-
-                                    <!-- Indicador de Grabación -->
                                     <div x-show="isRecording" class="flex items-center justify-center p-3 bg-red-50 rounded-xl">
                                         <div class="flex items-center text-red-600">
                                             <div class="w-3 h-3 bg-red-600 rounded-full animate-pulse mr-2"></div>
@@ -368,12 +353,10 @@
                                         </div>
                                     </div>
 
-                                    <!-- Reproductor de Audio -->
                                     <div x-show="audioUrl">
                                         <audio :src="audioUrl" controls class="w-full rounded-xl"></audio>
                                     </div>
 
-                                    <!-- Botones de Subida -->
                                     <div x-show="audioBlob" class="flex gap-3 mt-4">
                                         <button type="button" @click="submitAudio()" 
                                                 class="flex-1 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-xl transition duration-300">
@@ -389,7 +372,6 @@
                                 </div>
                             </div>
 
-                            <!-- Ejecutar ASR (AJAX, sin recargar) -->
                             <div x-show="viewingReading.audio_path && viewingReading.status === 'processing'">
                                 <button type="button" @click="runASR()" 
                                         class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl transition duration-300 mt-4">

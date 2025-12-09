@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ReadingSession; // Cambia de Reading a ReadingSession
+use App\Models\ReadingSession; 
 
 class CompareController extends Controller
 {
@@ -14,14 +14,12 @@ class CompareController extends Controller
 
     public function process(Request $request)
     {
-        // Lógica para procesar comparación
         $request->validate([
-            'reading_id' => 'required|exists:reading_sessions,id' // Cambia la tabla
+            'reading_id' => 'required|exists:reading_sessions,id' 
         ]);
 
         $reading = ReadingSession::findOrFail($request->reading_id);
         
-        // Aquí iría la lógica de comparación si no existe
         if (!$reading->precision || !$reading->wer) {
             // Calcular métricas si no existen
             $this->calculateMetrics($reading);
@@ -30,18 +28,15 @@ class CompareController extends Controller
         return redirect()->route('compare.results', ['reading' => $reading->id]);
     }
 
-    public function results(ReadingSession $reading) // Cambia el tipo de parámetro
+    public function results(ReadingSession $reading) 
     {
-        // Cargar relaciones necesarias
         $reading->load(['student', 'teacher', 'text']);
         
         return view('compare.results', compact('reading'));
     }
 
-    private function calculateMetrics(ReadingSession $reading) // Cambia el tipo
+    private function calculateMetrics(ReadingSession $reading) 
     {
-        // Lógica para calcular precisión y WER
-        // Esta es una implementación básica - ajusta según tus necesidades
         
         $originalText = $reading->text->texto_plano ?? '';
         $transcription = $reading->transcripcion ?? '';
@@ -50,11 +45,9 @@ class CompareController extends Controller
             return;
         }
         
-        // Convertir a arrays de palabras
         $originalWords = preg_split('/\s+/', trim($originalText));
         $transcribedWords = preg_split('/\s+/', trim($transcription));
         
-        // Cálculo básico de similitud (debes implementar mejor)
         $matches = 0;
         $minLength = min(count($originalWords), count($transcribedWords));
         

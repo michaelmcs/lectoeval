@@ -5,7 +5,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <div class="max-w-7xl mx-auto p-4 sm:p-6" x-data="studentApp()">
-        <!-- Encabezado -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div class="mb-4 md:mb-0">
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-800" style="font-family: 'Comic Sans MS', cursive;">Nuestros Estudiantes</h1>
@@ -25,8 +24,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Panel de Búsqueda y Filtros -->
         <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 mb-6 transition duration-300 hover:shadow-xl">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
@@ -57,7 +54,6 @@
             </div>
         </div>
 
-        <!-- Tabla de Estudiantes -->
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition duration-300 hover:shadow-xl">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
@@ -101,6 +97,11 @@
                             </tr>
                         </template>
                         <template x-if="filteredStudents.length === 0">
+
+
+
+
+
                             <tr>
                                 <td colspan="6" class="p-6 text-center text-gray-500">
                                     <div class="flex flex-col items-center justify-center">
@@ -114,8 +115,7 @@
                     </tbody>
                 </table>
             </div>
-            
-            <!-- Paginación -->
+
             <div class="p-3 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
                 <div class="text-gray-600 mb-3 md:mb-0 text-sm">
                     Mostrando <span x-text="showingFrom"></span> a <span x-text="showingTo"></span> de <span x-text="filteredStudents.length"></span> estudiantes
@@ -147,7 +147,6 @@
             </div>
         </div>
 
-        <!-- Modal para Agregar/Editar Estudiante -->
         <div x-show="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" 
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 transform scale-95"
@@ -203,6 +202,9 @@
                                 <option value="6">6° Grado</option>
                             </select>
                         </div>
+                        
+
+
                         
                         <!-- Tercera fila: Colegio, Sección -->
                         <div class="md:col-span-2">
@@ -373,8 +375,6 @@
                         });
                         return;
                     }
-
-                    // Validar DNI (solo números, 8 dígitos)
                     if (!/^\d{8}$/.test(this.formData.dni)) {
                         Swal.fire({
                             icon: 'warning',

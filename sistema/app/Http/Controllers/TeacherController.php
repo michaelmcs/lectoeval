@@ -12,7 +12,6 @@ class TeacherController extends Controller
     {
         $query = Teacher::latest();
         
-        // Búsqueda
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -135,7 +134,7 @@ class TeacherController extends Controller
         }
     }
 
-    // API endpoint para Alpine.js
+
     public function apiIndex()
     {
         $teachers = Teacher::latest()->get();
